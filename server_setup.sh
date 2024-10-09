@@ -6,5 +6,5 @@ rm ~/miniconda3/miniconda.sh
 ~/miniconda3/bin/conda init
 
 # install 
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh ./get-docker.sh --dry-run
+sudo sh ./get-docker.sh
+sudo chmod 777 /var/run/docker.sock

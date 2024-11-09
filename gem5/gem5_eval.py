@@ -275,8 +275,10 @@ def read_inputs_and_prepare_v2(cfg) -> pd.DataFrame:
         len(merged) > 0
     ), f"{cfg.slow_code_col} and {cfg.reference_code_col} are the same for all programs"
     
-    if cfg.num_problems_to_evaluate != -1:
-        merged = merged[: cfg.num_problems_to_evaluate]
+    if cfg.last_problem_to_evaluate != -1:
+        merged = merged[: cfg.last_problem_to_evaluate]
+    if cfg.first_problem_to_evaluate != 0:
+        merged = merged[cfg.first_problem_to_evaluate:]
     
     
     # if the generated code is a list, then we have multiple generations per input. 
@@ -371,7 +373,7 @@ def main(cfg):
             if not os.path.exists(cfg.output_dir):
                 os.makedirs(cfg.output_dir)
             global env
-            env = simulator.make(timeout_seconds_gem5=120, verbose=True, use_logical_cpus=True, port=8888, workers=40, exit_early_on_fail=True)
+            env = simulator.make(timeout_seconds_gem5=120, verbose=True, use_logical_cpus=True, port=cfg.port, workers=40, exit_early_on_fail=True)
             ## iterate in batches of cpus_available, env.submit_mutliple_single_submissions() will submit the batch at once
             new_rows = []
             pbar = tqdm(total=len(melted), desc=f"Submitting {len(melted)} programs to evaluate", smoothing=0)
@@ -457,10 +459,12 @@ class EvaluationConfig:
     cpuset_cpus: Optional[str] = None
     do_eval: bool = False
     cpus_available: int = 1
-    num_problems_to_evaluate: int = -1
+    first_problem_to_evaluate: int = 0
+    last_problem_to_evaluate: int = -1
     threshold_accuracy: float = 1.0
     redo_src_tgt: bool = False
     num_generated_cols: int = None
+    port: int = 8888
 
 def load_config(yaml_path: str) -> EvaluationConfig:
     with open(yaml_path, 'r') as f:

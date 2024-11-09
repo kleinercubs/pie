@@ -481,7 +481,7 @@ class PieEnvironment:
         
         dockerfile = DOCKERFILE_TEMPLATE + "\n" + "EXPOSE " + str(self.port) + "\n" + "CMD " + " ".join(command)
         
-        assert not os.path.exists(f"{GEM5_DIR_PATH}/Dockerfile")
+        assert not os.path.exists(f"{GEM5_DIR_PATH}/Dockerfile"), f"{GEM5_DIR_PATH}/Dockerfile already exists"
         with open(f"{GEM5_DIR_PATH}/Dockerfile", "w") as f:
             f.write(DOCKERFILE_TEMPLATE)
         print("Dockerfile written")

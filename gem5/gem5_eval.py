@@ -350,7 +350,7 @@ def main(cfg):
     # sort by "n_tests"
     melted = melted.sort_values(by=["n_tests"], ascending=False)
     
-    if not os.path.exists(os.path.join(cfg.output_dir, f"test_results_{args.first_problem_to_evaluate}_{args.last_problem_to_evaluate}.jsonl")):
+    if not os.path.exists(os.path.join(cfg.output_dir, f"test_results_{cfg.first_problem_to_evaluate}_{cfg.last_problem_to_evaluate}.jsonl")):
         # drop any rows where the code length is 0
         melted = melted[melted["code"].apply(lambda x: len(x) > 0)]
         logging.info(f"Dropped {orig_len - len(melted)} rows with NA or empty code")
@@ -399,7 +399,7 @@ def main(cfg):
             # pbar.update(len(batch))
             melted = pd.DataFrame(new_rows)
             melted.to_json(
-                f"{cfg.output_dir}/melted_test_results_{args.first_problem_to_evaluate}_{args.last_problem_to_evaluate}.jsonl", 
+                f"{cfg.output_dir}/melted_test_results_{cfg.first_problem_to_evaluate}_{cfg.last_problem_to_evaluate}.jsonl", 
                 orient="records",
                 lines=True
             )
@@ -420,13 +420,13 @@ def main(cfg):
         unmelted_df = unmelt_results(melted, cfg)
         
         unmelted_df.to_json(
-            f"{cfg.output_dir}/test_results_{args.first_problem_to_evaluate}_{args.last_problem_to_evaluate}.jsonl",
+            f"{cfg.output_dir}/test_results_{cfg.first_problem_to_evaluate}_{cfg.last_problem_to_evaluate}.jsonl",
             orient="records",
             lines=True
         )
     else:
         unmelted_df = pd.read_json(
-            f"{cfg.output_dir}/test_results_{args.first_problem_to_evaluate}_{args.last_problem_to_evaluate}.jsonl",
+            f"{cfg.output_dir}/test_results_{cfg.first_problem_to_evaluate}_{cfg.last_problem_to_evaluate}.jsonl",
             orient="records",
             lines=True
         )
@@ -434,12 +434,12 @@ def main(cfg):
     agg_df, result_df = report_results(unmelted_df, cfg, reference_df)
     
     agg_df.to_csv(
-        f"{cfg.output_dir}/aggregated_results_{args.first_problem_to_evaluate}_{args.last_problem_to_evaluate}.csv",
+        f"{cfg.output_dir}/aggregated_results_{cfg.first_problem_to_evaluate}_{cfg.last_problem_to_evaluate}.csv",
         index=False
     )
     
     result_df.to_json(
-        f"{cfg.output_dir}/addtl_stats_{args.first_problem_to_evaluate}_{args.last_problem_to_evaluate}.jsonl",
+        f"{cfg.output_dir}/addtl_stats_{cfg.first_problem_to_evaluate}_{cfg.last_problem_to_evaluate}.jsonl",
         orient="records",
         lines=True
     )

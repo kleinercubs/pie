@@ -129,13 +129,14 @@ def report_results(df, cfg, orig_df):
             unique_rows[f"{colname}_tc2time"] = [{} for _ in range(len(unique_rows))]  # Setting tc2time to {}
         # drop unique rows columns that are not in df
         unique_rows = unique_rows[[c for c in unique_rows.columns if c in df.columns]]
-
         # Step 3: Append the modified unique rows to df
         df = pd.concat([df, unique_rows], ignore_index=True)
 
         print(f"columns after appending {df.columns}")
         print(f"unique rows columns {unique_rows.columns}")
         assert len(df) == 978, f"len(df) {len(df)} == 978"
+        # Step 4: Drop those rows that have empty generated_answers_0
+        df = df.dropna(subset=[f"{cfg.model_generated_potentially_faster_code_col}_0"])
         
         new_rows = []
         for i, row in df.iterrows():
